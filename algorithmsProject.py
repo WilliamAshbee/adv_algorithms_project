@@ -4,10 +4,22 @@
 from pulp import *
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.spatial import distance
 
-vert_to_cart = {'a':(0,0),'b':(1,0),'c':(1,1),'d':(0,1)}
-verticies = ['a','b','c','d']
-distances = np.array([[0,1,np.sqrt(2),1],[1,0,1,np.sqrt(2)],[np.sqrt(2),1,0,1],[1,np.sqrt(2),1,0]])
+#verts = np.array([[0,0,0],[0,1,0],[1,0,0],[1,1,0]])
+theta = np.linspace(0,3.0/2.0,4)*3.14159
+verts = np.zeros((4,3))
+verts[:,0] = np.cos(theta)#array([ 1.00000000e+00,  1.32679490e-06, -1.00000000e+00, -3.98038469e-06])
+verts[:,1] = np.sin(theta)#array([ 0.00000000e+00,  1.00000000e+00,  2.65358979e-06, -1.00000000e+00])
+print(verts)
+vert_to_cart = dict()
+for i in range(verts.shape[0]):
+    vert_to_cart['v'+str(i)] = (verts[i,0],verts[i,1],verts[i,2])
+print(vert_to_cart)
+verticies = list(vert_to_cart.keys())
+print(verticies)
+distances = distance.cdist(verts, verts, 'euclidean')
+print(distances)
 problem = LpProblem('Car Factory', LpMinimize)
 
 
@@ -27,7 +39,7 @@ for vi in range(len(verticies)):
         edges.append(var)
         cartesian_dict[s]=(vert_to_cart[verticies[vi]][0],vert_to_cart[verticies[vi]][1],vert_to_cart[verticies[vj]][0],vert_to_cart[verticies[vj]][1])
         edges_dict[s] = var
-assert len(edges)==6
+assert len(edges)==(verts.shape[0]*(verts.shape[0]-1)//2)
 obj = LpAffineExpression(edges)
 print ('objective',obj)
 problem+= obj
@@ -40,7 +52,7 @@ assert numedges == nVert*(nVert-1)//2
 
 
 for vert in verticies:
-    assert len(inci_dict[verticies[vi]]) == 3
+    assert len(inci_dict[verticies[vi]]) == verts.shape[0]-1
     ec = LpAffineExpression(inci_dict[vert])
     ec = LpConstraint(e=ec, sense=1, name='incivert_'+vert, rhs=2)
     problem+=ec
@@ -49,12 +61,10 @@ for vert in verticies:
 print("Current Status: ", LpStatus[problem.status])
 
 problem.solve()
-
+tot = 0.0
 for edge in edges:
-    print('edge',edge[1],edge[0].varValue)
-
-
-print("Total edges: ", value(problem.objective))
+    tot+= edge[0].varValue
+print("Total used edges: ", tot)
 
 print(problem.objective)
 for a,b in enumerate(problem.constraints):
@@ -65,7 +75,7 @@ ax = plt.axes(projection='3d')
 
 for ind,key in enumerate(edges_dict):
     edge = edges_dict[key]
-    print(edge,key)
+    print('edge[1],key,edge[0].varval:::',edge[1],key,edge[0].varValue)
     if edge[0].varValue == 1.0:
         x = [cartesian_dict[key][0],cartesian_dict[key][2]]
         y = [cartesian_dict[key][1],cartesian_dict[key][3]]
