@@ -13,7 +13,7 @@ import math
 from torch.utils import data
 from torch.utils.data import DataLoader, TensorDataset, RandomSampler
 
-from vit_pytorch import ViT
+#from vit_pytorch import ViT
 
 
 def getConvMatricies():
