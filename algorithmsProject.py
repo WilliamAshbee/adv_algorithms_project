@@ -114,6 +114,7 @@ ax = plt.axes(projection='3d')
 omitset = set()
 
 
+#plot half
 for ind,key in enumerate(edges_dict):
     print(ind,key)
     edge = edges_dict[key]
@@ -126,6 +127,26 @@ for ind,key in enumerate(edges_dict):
             ax.plot(x,y,z,marker=',',color='green',lw=.5)
 
 ax.scatter(verts[verts[:,0]<median[0],0],verts[verts[:,0]<median[0],1],verts[verts[:,0]<median[0],2])
+
+
+#ax.view_init(0,0,0)
+#plt.savefig('first.png',dpi=600)
+plt.show()
+
+#plot all
+for ind,key in enumerate(edges_dict):
+    print(ind,key)
+    edge = edges_dict[key]
+    #print('edge[1],key,edge[0].varval:::',edge[1],key,edge[0].varValue)
+    if edge[0].varValue == 1.0  :
+        x = [cartesian_dict[key][0],cartesian_dict[key][3]]
+        y = [cartesian_dict[key][1],cartesian_dict[key][4]]
+        z = [cartesian_dict[key][2],cartesian_dict[key][5]]
+        ax.plot(x,y,z,marker=',',color='green',lw=.5)
+
+ax.scatter(verts[:,0],verts[:,1],verts[:,2])
+
+
 #ax.view_init(0,0,0)
 #plt.savefig('first.png',dpi=600)
 plt.show()
