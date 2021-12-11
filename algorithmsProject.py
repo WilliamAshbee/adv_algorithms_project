@@ -31,8 +31,12 @@ mini_batch = 20
 
 print(dataset[0][1].shape)
 verts = dataset[0][1]
+
+exit()
 print(verts.shape)
 verts = verts[inds,:]
+median = (np.median(verts[:,0]),np.median(verts[:,1]),np.median(verts[:,2]))
+
 print(verts.shape,type(verts))
 print(verts.shape[0],type(verts.shape[0]))
 #print(verts)
@@ -44,7 +48,7 @@ verticies = list(vert_to_cart.keys())
 print(len(verticies))
 distances = distance.cdist(verts, verts, 'euclidean')
 print(distances)
-problem = LpProblem('Car Factory', LpMinimize)
+problem = LpProblem('Graph problem', LpMinimize)
 
 
 edges = []
@@ -107,14 +111,21 @@ print("Total used edges: ", tot)
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 
+omitset = set()
+
+
 for ind,key in enumerate(edges_dict):
+    print(ind,key)
     edge = edges_dict[key]
     #print('edge[1],key,edge[0].varval:::',edge[1],key,edge[0].varValue)
-    if edge[0].varValue == 1.0:
+    if edge[0].varValue == 1.0  :
         x = [cartesian_dict[key][0],cartesian_dict[key][3]]
         y = [cartesian_dict[key][1],cartesian_dict[key][4]]
         z = [cartesian_dict[key][2],cartesian_dict[key][5]]
-        ax.plot(x,y,z,marker=',',color='green',lw=.5)
+        if x[0] < median[0] and x[1] < median[0]:
+            ax.plot(x,y,z,marker=',',color='green',lw=.5)
 
 ax.scatter(verts[:,0],verts[:,1],verts[:,2])
+ax.view_init(0,0,0)
 plt.savefig('first.png',dpi=600)
+

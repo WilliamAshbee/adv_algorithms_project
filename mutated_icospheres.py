@@ -51,7 +51,7 @@ def get2dfrom3d(a, ena = False):
     y = a.permute(0,2,1,3)
     z = a.permute(0,3,2,1)
 
-    x2d = torch.zeros((a.shape[0],64,64)).cuda()
+    x2d = torch.zeros((a.shape[0],64,64))
     y2d = torch.zeros_like(x2d)
     z2d = torch.zeros_like(x2d)
 
@@ -94,12 +94,12 @@ def get2dfrom3d(a, ena = False):
 
 
   else:
-    final2d = torch.zeros((a.shape[0],64,64)).cuda()
+    final2d = torch.zeros((a.shape[0],64,64))
     final2d[:,y2dind,x2dind] = a[:,y3dind,x3dind,z3dind]
     return final2d
 
 def checkPositionalMapping():
-    b = torch.zeros((16,16,16)).cuda()
+    b = torch.zeros((16,16,16))
 
     count = 0
     for j in range(16):
@@ -111,7 +111,7 @@ def checkPositionalMapping():
     c= b.detach().clone()
     m2dtransform = get2dfrom3d(c)
     for ii in range (b.shape[0]):
-      chk = torch.from_numpy(np.array([i for i in range(64)])).cuda()
+      chk = torch.from_numpy(np.array([i for i in range(64)]))
       temp = b[ii,:,:,:].reshape((64,64))
       
       assert (temp[0,:]!= chk).sum() == 0
@@ -292,7 +292,7 @@ def plot_all(sample=None, model=None, labels=None, i=0):
             global numpoints
 
             #print('preloss')
-            loss, out = mse_vit(sample.cuda(), labels.cuda(), model=model, ret_out=True)
+            loss, out = mse_vit(sample, labels, model=model, ret_out=True)
             #print('loss', loss)
             fig = plt.figure()
             for i in range(mini_batch):
