@@ -133,6 +133,11 @@ ax.scatter(verts[verts[:,0]<median[0],0],verts[verts[:,0]<median[0],1],verts[ver
 #plt.savefig('first.png',dpi=600)
 plt.show()
 
+
+
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+
 #plot all
 for ind,key in enumerate(edges_dict):
     print(ind,key)
