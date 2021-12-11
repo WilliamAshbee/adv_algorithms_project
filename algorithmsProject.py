@@ -155,3 +155,38 @@ ax.scatter(verts[:,0],verts[:,1],verts[:,2])
 #ax.view_init(0,0,0)
 #plt.savefig('first.png',dpi=600)
 plt.show()
+
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+
+edges2 = []
+for i in range(distances.shape[0]):
+    #d= distances[i].clone()
+    d = np.copy(distances[i])
+    assert np.argmin(d) == i 
+    maxd = np.max(d)
+    d[i] = maxd
+    v1 = np.argmin(d)
+    d[v1] = maxd
+    v2 = np.argmin(d)
+    d[v2] = maxd
+    
+    if i < v1:
+        edges2.append('v'+str(i)+'_v'+str(v1))
+    else:
+        edges2.append('v'+str(v1)+'_v'+str(i))
+        
+    if i < v2:
+        edges2.append('v'+str(i)+'_v'+str(v2))
+    else:
+        edges2.append('v'+str(v2)+'_v'+str(i))
+        
+for key in edges2:
+    print(key)
+    edge = edges_dict[key]
+    #print('edge[1],key,edge[0].varval:::',edge[1],key,edge[0].varValue)
+    if edge[0].varValue == 1.0  :
+        x = [cartesian_dict[key][0],cartesian_dict[key][3]]
+        y = [cartesian_dict[key][1],cartesian_dict[key][4]]
+        z = [cartesian_dict[key][2],cartesian_dict[key][5]]
+        ax.plot(x,y,z,marker=',',color='green',lw=.5)
