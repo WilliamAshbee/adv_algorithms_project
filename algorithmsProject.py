@@ -32,14 +32,14 @@ mini_batch = 20
 print(dataset[0][1].shape)
 verts = dataset[0][1]
 
-exit()
+#exit()
 print(verts.shape)
 verts = verts[inds,:]
 median = (np.median(verts[:,0]),np.median(verts[:,1]),np.median(verts[:,2]))
 
 print(verts.shape,type(verts))
 print(verts.shape[0],type(verts.shape[0]))
-#print(verts)
+
 vert_to_cart = dict()
 for i in range(verts.shape[0]):
     vert_to_cart['v'+str(i)] = (verts[i,0],verts[i,1],verts[i,2])
@@ -125,7 +125,7 @@ for ind,key in enumerate(edges_dict):
         if x[0] < median[0] and x[1] < median[0]:
             ax.plot(x,y,z,marker=',',color='green',lw=.5)
 
-ax.scatter(verts[:,0],verts[:,1],verts[:,2])
-ax.view_init(0,0,0)
-plt.savefig('first.png',dpi=600)
-
+ax.scatter(verts[verts[:,0]<median[0],0],verts[verts[:,0]<median[0],1],verts[verts[:,0]<median[0],2])
+#ax.view_init(0,0,0)
+#plt.savefig('first.png',dpi=600)
+plt.show()
