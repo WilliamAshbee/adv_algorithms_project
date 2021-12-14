@@ -178,7 +178,8 @@ for i in range(distances.shape[0]):
             edges2.append('v'+str(i)+'_v'+str(v))
         else:
             edges2.append('v'+str(v)+'_v'+str(i))
-        
+
+edges2 = set(edges2)   
 tot_greedy_d = 0.0
 for key in edges2:
     print(key)
