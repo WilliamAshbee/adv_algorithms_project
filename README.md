@@ -1,6 +1,7 @@
 # adv_algorithms_project
-Github File Descriptions
-requirements.txt: This file contains a list of all of the
+Github File Descriptions \\
+requirements.txt: \\
+This file contains a list of all of the
 dependencies for the project. It can be installed in python 3.7
 environments using the following command:
 pip install -r requirements.txt
