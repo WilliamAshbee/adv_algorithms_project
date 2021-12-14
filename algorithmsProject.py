@@ -126,7 +126,7 @@ for ind,key in enumerate(edges_dict):
         if x[0] < median[0] and x[1] < median[0]:
             ax.plot(x,y,z,marker=',',color='green',lw=.5)
 
-ax.scatter(verts[verts[:,0]<median[0],0],verts[verts[:,0]<median[0],1],verts[verts[:,0]<median[0],2])
+ax.scatter3D(verts[verts[:,0]<median[0],0],verts[verts[:,0]<median[0],1],verts[verts[:,0]<median[0],2],s=10)
 
 
 #ax.view_init(0,0,0)
@@ -139,17 +139,20 @@ fig = plt.figure()
 ax = plt.axes(projection='3d')
 
 #plot all
+total_ILP_edges = 0
+
 for ind,key in enumerate(edges_dict):
     print(ind,key)
     edge = edges_dict[key]
     #print('edge[1],key,edge[0].varval:::',edge[1],key,edge[0].varValue)
-    if edge[0].varValue == 1.0  :
+    if edge[0].varValue == 1.0:
+        total_ILP_edges += 1
         x = [cartesian_dict[key][0],cartesian_dict[key][3]]
         y = [cartesian_dict[key][1],cartesian_dict[key][4]]
         z = [cartesian_dict[key][2],cartesian_dict[key][5]]
         ax.plot(x,y,z,marker=',',color='green',lw=.5)
 
-ax.scatter(verts[:,0],verts[:,1],verts[:,2])
+ax.scatter(verts[:,0],verts[:,1],verts[:,2],s=10)
 
 
 #ax.view_init(0,0,0)
@@ -160,33 +163,38 @@ fig = plt.figure()
 ax = plt.axes(projection='3d')
 
 edges2 = []
+rhs = 6
 for i in range(distances.shape[0]):
     #d= distances[i].clone()
     d = np.copy(distances[i])
     assert np.argmin(d) == i 
     maxd = np.max(d)
     d[i] = maxd
-    v1 = np.argmin(d)
-    d[v1] = maxd
-    v2 = np.argmin(d)
-    d[v2] = maxd
-    
-    if i < v1:
-        edges2.append('v'+str(i)+'_v'+str(v1))
-    else:
-        edges2.append('v'+str(v1)+'_v'+str(i))
+    for j in range(rhs):
+        v = np.argmin(d)
+        d[v] = maxd
         
-    if i < v2:
-        edges2.append('v'+str(i)+'_v'+str(v2))
-    else:
-        edges2.append('v'+str(v2)+'_v'+str(i))
+        if i < v:
+            edges2.append('v'+str(i)+'_v'+str(v))
+        else:
+            edges2.append('v'+str(v)+'_v'+str(i))
         
+tot_greedy_d = 0.0
 for key in edges2:
     print(key)
     edge = edges_dict[key]
     #print('edge[1],key,edge[0].varval:::',edge[1],key,edge[0].varValue)
-    if edge[0].varValue == 1.0  :
-        x = [cartesian_dict[key][0],cartesian_dict[key][3]]
-        y = [cartesian_dict[key][1],cartesian_dict[key][4]]
-        z = [cartesian_dict[key][2],cartesian_dict[key][5]]
-        ax.plot(x,y,z,marker=',',color='green',lw=.5)
+    x = [cartesian_dict[key][0],cartesian_dict[key][3]]
+    y = [cartesian_dict[key][1],cartesian_dict[key][4]]
+    z = [cartesian_dict[key][2],cartesian_dict[key][5]]
+    d = np.sqrt((x[0]-x[1])**2+(y[0]-y[1])**2+(z[0]-z[1])**2)
+    ax.plot(x,y,z,marker=',',color='green',lw=.5)
+    tot_greedy_d+=d
+
+ax.scatter(verts[:,0],verts[:,1],verts[:,2],s=10)
+
+print('tot_greedy_d',tot_greedy_d)
+print('total greedy edges',len(edges2))
+print('objective',float(pulp.value(obj)))
+print('total_ILP_edges',total_ILP_edges)
+plt.show()
